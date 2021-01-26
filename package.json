@@ -1,0 +1,31 @@
+{
+  "name": "fuzzy-search-hi-en-transliterate",
+  "version": "1.0.0",
+  "description": "Fuzzy search with mysql hindi to english and trasliterate hindi to english",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codesoverflow/fuzzy-search-hi-en-transliterate.git"
+  },
+  "keywords": [
+    "Fuzzy",
+    "Search",
+    "mysql",
+    "transliterate",
+    "hindi",
+    "to",
+    "english"
+  ],
+  "author": "Codes Overflow",
+  "license": "ISC",
+  "dependencies": {
+    "transliteration": "^2.2.0"
+  },
+  "bugs": {
+    "url": "https://github.com/codesoverflow/fuzzy-search-hi-en-transliterate/issues"
+  },
+  "homepage": "https://github.com/codesoverflow/fuzzy-search-hi-en-transliterate#readme"
+}
