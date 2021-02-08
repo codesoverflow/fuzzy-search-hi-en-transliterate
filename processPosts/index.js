@@ -1,5 +1,7 @@
 const postsNetworkData = require("./postsNetworkData");
 const utils = require("../Utils/utils")
+const postsDBProcess = require('./postsDBProcess')
+
 const perPage = utils.getPerPageItems()
 
 async function processData() {
@@ -22,12 +24,13 @@ function processCategory(category) {
 
 async function processPosts(categoryId, pageNo, perPage) {
     const posts = await postsNetworkData.getPosts(categoryId, pageNo, perPage)
-    console.log("posts.length", posts.length)
-    posts.forEach(processPost)
+    for(const post of posts) {
+        await processPost(post)
+    }
 }
 
-function processPost(post) {
-    //console.log(post.id)
+async function processPost(post) {
+    await postsDBProcess.processPostDB(post)
 }
 
 processData()
