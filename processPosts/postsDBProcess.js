@@ -1,9 +1,10 @@
 const dbUtils = require("../Utils/dbUtils");
 const transliterateUtils = require("../Utils/transliterationUtils");
+const connection = dbUtils.connection;
 
 function getPostById(postId) {
   const sql = "SELECT * FROM `posts` WHERE `postId` = ?";
-  return dbUtils.queryWrappedWithPromise(sql, [postId]);
+  return dbUtils.queryWrappedWithPromise(connection, sql, [postId]);
 }
 
 function insertPost(post) {
@@ -13,28 +14,32 @@ function insertPost(post) {
   const content = post.content.rendered;
   const postJson = JSON.stringify(post);
   const transliteratedTitle = transliterateUtils.transliterate(title);
-  const transliteratedSlug = transliterateUtils.transliterate(slug);
-  const sql = `INSERT INTO posts (title, slug, postId, content, postJson) 
-    VALUES ('?', '?', '?', '?', '?')`;
+  const transliteratedSlug = transliterateUtils.replace(slug, ['lyrics', '-'], ['', ' ']);
+  const sql = `INSERT INTO posts (title, slug, postId) 
+    VALUES (?, ?, ?)`;
 
-  return dbUtils.queryWrappedWithPromise(sql, [
+  return dbUtils.queryWrappedWithPromise(connection, sql, [
     transliteratedTitle,
     transliteratedSlug,
     postId,
-    content,
-    postJson,
+    // content,
+    // postJson,
   ]);
 }
 
 async function processPostDB(post) {
   const postId = post.postId;
-  const res = await getPostById(postId);
+  try {
+    const res = await getPostById(postId);
 
-  if (res.postId) {
-    return;
+    if (res && res.postId) {
+      return;
+    }
+
+    await insertPost(post);
+  } catch (error) {
+    console.log("error", error);
   }
-
-  await insertPost(post);
 }
 
 function connect() {

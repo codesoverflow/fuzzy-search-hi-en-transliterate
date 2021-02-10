@@ -5,11 +5,16 @@ const postsDBProcess = require('./postsDBProcess')
 const perPage = utils.getPerPageItems()
 
 async function processData() {
+    postsDBProcess.connect()
     const categories = await postsNetworkData.getCategories()
-    categories.forEach(processCategory)
+    for(category of categories) {
+        await processCategory(category)
+    }
+
+    postsDBProcess.disconnect()
 }
 
-function processCategory(category) {
+async function processCategory(category) {
     const categoryId = category.id
     const totalPosts = category.count
     const lastPageNo = category.lastPageNo || 0
@@ -17,7 +22,7 @@ function processCategory(category) {
     const nextPageNo = utils.getNextPageNo(totalPosts, fetchedItems)
     category.lastPageNo = nextPageNo
 
-    processPosts(categoryId, nextPageNo, perPage)
+    await processPosts(categoryId, nextPageNo, perPage)
 
     
 }
@@ -27,10 +32,12 @@ async function processPosts(categoryId, pageNo, perPage) {
     for(const post of posts) {
         await processPost(post)
     }
+    
 }
 
 async function processPost(post) {
     await postsDBProcess.processPostDB(post)
 }
+
 
 processData()
